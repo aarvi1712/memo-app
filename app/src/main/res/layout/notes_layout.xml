@@ -23,14 +23,13 @@ android:layout_gravity="center_vertical"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:textSize="18sp"
-            android:text="demmo app for u and u can note all things inside the app and u can feature all sudden changes in it"
-            />
+           />
 
         <TextView
             android:id="@+id/note_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="9:20pm 12/3/2020"
+
             android:layout_marginTop="3sp"
             android:layout_marginBottom="15sp"
             android:layout_marginStart="12sp"

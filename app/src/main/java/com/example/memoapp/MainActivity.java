@@ -1,8 +1,12 @@
 package com.example.memoapp;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.memoapp.adapters.NoteAdapter;
+import com.example.memoapp.db.NotesDao;
+import com.example.memoapp.db.NotesDb;
 import com.example.memoapp.model.Note;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -11,17 +15,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Dao;
 
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-private RecyclerView rview;
-private ArrayList<Note> notes;
-private NoteAdapter adapter;
+    private RecyclerView rview;
+    private ArrayList<Note> notes;
+    private NoteAdapter adapter;
+    private NotesDao dao;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,25 +38,31 @@ private NoteAdapter adapter;
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-rview=findViewById(R.id.recyclerview);
-rview.setLayoutManager(new LinearLayoutManager(this));
-loadNotes();
+        rview = findViewById(R.id.recyclerview);
+        rview.setLayoutManager(new LinearLayoutManager(this));
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              onAddNewNote();
+
+                onAddNewNote();
             }
         });
+      dao= NotesDb.getInstance(this).noteDao();
     }
 
     private void loadNotes() {
-
+        this.notes = new ArrayList<>();
+        List<Note> list=dao.getNotes();
+        this.notes.addAll(list);
+        adapter = new NoteAdapter(this,notes);
+        rview.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
-    public void onAddNewNote()
-    {
-
+    public void onAddNewNote() {
+        startActivity(new Intent(this,EditNotes.class));
     }
 
     @Override
@@ -70,5 +85,12 @@ loadNotes();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadNotes();
     }
 }
